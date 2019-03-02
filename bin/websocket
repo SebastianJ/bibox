@@ -23,18 +23,25 @@ class WebsocketWrapper
   
   def set_callbacks
     # Subscription callback
-    self.client.callbacks[:subscribe]     = -> { subscribe! }
+    self.client.callbacks[:subscribe]               =   -> { subscribe! }
     
     # Received messages callbacks
-    self.client.callbacks[:trading_pairs] = -> (data) { trading_pairs(data) }
-    self.client.callbacks[:order_book]    = -> (data) { order_book(data) }
-    self.client.callbacks[:trades]        = -> (data) { trades(data) }
-    self.client.callbacks[:ticker]        = -> (data) { ticker(data) }
-    self.client.callbacks[:klines]        = -> (data) { klines(data) }
+    self.client.callbacks[:trading_pairs]           =   -> (data) { trading_pairs(data) }
+    self.client.callbacks[:order_book]              =   -> (data) { order_book(data) }
+    self.client.callbacks[:trades]                  =   -> (data) { trades(data) }
+    self.client.callbacks[:ticker]                  =   -> (data) { ticker(data) }
+    self.client.callbacks[:klines]                  =   -> (data) { klines(data) }
+    
+    self.client.callbacks[:index_markets]           =   -> (data) { index_markets(data) }
+    self.client.callbacks[:contract_price_limits]   =   -> (data) { contract_price_limits(data) }
   end
   
   def subscribe!(pairs: ["4ETH_USDT"])
-    #self.client.subscribe_to_trading_pairs!
+    self.client.login!
+    self.client.subscribe_to_trading_pairs!
+    #self.client.subscribe_to_index_markets!
+    #self.client.subscribe_to_contract_price_limits!
+    
     self.client.subscribe_to_order_book!(pairs: pairs)
     self.client.subscribe_to_trades!(pairs: pairs)
     self.client.subscribe_to_ticker!(pairs: pairs)
@@ -63,6 +70,16 @@ class WebsocketWrapper
   
   def klines(data)
     puts "\nReceived klines message!"
+    pp data
+  end
+  
+  def index_markets(data)
+    puts "\nReceived index markets message!"
+    pp data
+  end
+  
+  def contract_price_limits(data)
+    puts "\nReceived contract price limits message!"
     pp data
   end
   

@@ -1,7 +1,12 @@
 module Bibox
   class Utilities
     
-    class << self      
+    class << self
+      
+      def decode_and_inflate(data)
+        Zlib::GzipReader.new(StringIO.new(Base64.decode64(data))).read
+      end
+      
       def convert_value(value, type, use_ms_for_time: true)
         if type.is_a?(Symbol)
           return case type

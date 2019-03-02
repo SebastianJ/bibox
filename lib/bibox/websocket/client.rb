@@ -10,21 +10,27 @@ module Bibox
         self.keepalive    =   options.fetch(:keepalive, false)
         
         self.matchers     =   {
-          trading_pairs:  /\d?[A-Z]+_[A-Z]+_market/,
-          order_book:     /\d?[A-Z]+_[A-Z]+_depth$/,
-          trades:         /\d?[A-Z]+_[A-Z]+_deals$/,
-          ticker:         /\d?[A-Z]+_[A-Z]+_ticker$/,
-          klines:         /\d?[A-Z]+_[A-Z]+_kline_(?<period>.*)$/
+          trading_pairs:          /\d?[A-Z]+_[A-Z]+_market/,
+          order_book:             /\d?[A-Z]+_[A-Z]+_depth$/,
+          trades:                 /\d?[A-Z]+_[A-Z]+_deals$/,
+          ticker:                 /\d?[A-Z]+_[A-Z]+_ticker$/,
+          klines:                 /\d?[A-Z]+_[A-Z]+_kline_(?<period>.*)$/,
+          
+          index_markets:          /\d?[A-Z]+_[A-Z]+_indexMarket/,
+          contract_price_limits:  /\d?[A-Z]+_[A-Z]+_contractPriceLimit$/,
         }
         
         self.callbacks    =   {
-          subscribe:      ->  { subscribe! },
-          message:        ->  (data) { message(data) },
-          trading_pairs:  ->  (data) { nil },
-          order_book:     ->  (data) { nil },
-          trades:         ->  (data) { nil },
-          ticker:         ->  (data) { nil },
-          klines:         ->  (data) { nil },
+          subscribe:              ->  { subscribe! },
+          message:                ->  (data) { message(data) },
+          trading_pairs:          ->  (data) { nil },
+          order_book:             ->  (data) { nil },
+          trades:                 ->  (data) { nil },
+          ticker:                 ->  (data) { nil },
+          klines:                 ->  (data) { nil },
+          
+          index_markets:          ->  (data) { nil },
+          contract_price_limits:  ->  (data) { nil },
         }
       end
 
@@ -56,8 +62,20 @@ module Bibox
         self.socket.onerror     =   method(:on_error)
       end
       
+      def login!
+        subscribe_to! channel_name("ALL_ALL_login")
+      end
+      
       def subscribe_to_trading_pairs!
         subscribe_to! channel_name("ALL_ALL_market")
+      end
+      
+      def subscribe_to_index_markets!
+        subscribe_to! channel_name("ALL_ALL_indexMarket")
+      end
+      
+      def subscribe_to_contract_price_limits!
+        subscribe_to! channel_name("ALL_ALL_contractPriceLimit")
       end
       
       def subscribe_to_order_book!(pairs: [])
@@ -105,6 +123,10 @@ module Bibox
             period = channel.match(self.matchers[:klines])&.[](:period)
             data.merge!("period" => period) if !period.to_s.empty?
             self.callbacks[:klines].call(data)
+          when self.matchers[:index_markets]
+            self.callbacks[:index_markets].call(data)
+          when self.matchers[:contract_price_limits]
+            self.callbacks[:contract_price_limits].call(data)
         end
       end
 
@@ -114,10 +136,6 @@ module Bibox
           return JSON.parse(data)
         rescue => err
           return data
-        end
-        
-        def decode_and_inflate(data)
-          Zlib::GzipReader.new(StringIO.new(Base64.decode64(data))).read
         end
         
         def send_pong(timestamp)
@@ -130,7 +148,7 @@ module Bibox
 
         def on_message(event)
           parsed                =   parse(event.data)
-
+          
           if parsed
             if parsed.is_a?(Hash)
               send_pong(parsed["ping"]) unless parsed.fetch("ping", nil).to_s.empty?
@@ -141,7 +159,7 @@ module Bibox
             is_binary           =   parsed.fetch("binary", nil)&.eql?("1")
 
             if is_binary && !parsed.fetch("data", nil).to_s.empty?
-              parsed["data"]    =   parse(decode_and_inflate(parsed["data"]))
+              parsed["data"]    =   parse(Bibox::Utilities.decode_and_inflate(parsed["data"]))
             end
           
             self.callbacks[:message].call(parsed)
