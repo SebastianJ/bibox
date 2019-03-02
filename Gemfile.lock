@@ -2,9 +2,9 @@ PATH
   remote: .
   specs:
     bibox (0.1.2)
-      eventmachine (>= 1.2.5)
-      faraday (>= 0.13)
-      faraday_middleware (>= 0.12.2)
+      eventmachine (>= 1.2.7)
+      faraday (>= 0.15.4)
+      faraday_middleware (>= 0.13.1)
       faye-websocket (>= 0.10.7)
 
 GEM
