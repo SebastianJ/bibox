@@ -10,6 +10,9 @@
 # rspec failure tracking
 .rspec_status
 
+# pry
+.pry_history
+
 credentials.yml
 .ruby-version
 .ruby-gemset

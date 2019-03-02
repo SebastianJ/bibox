@@ -25,8 +25,8 @@ describe Bibox::Rest::Client do
       coin_symbol:    "ETH",
       confirm_count:  "14+",
       amount:         1.0,
-      updated_at:     DateTime.new(2018, 01, 29, 20, 42, 28, 0),
-      created_at:     DateTime.new(2018, 01, 29, 20, 39, 00, 0),
+      updated_at:     DateTime.new(2019, 03, 02, 9, 13, 1).to_time,
+      created_at:     DateTime.new(2019, 03, 02, 9, 13, 1).to_time,
       url:            "https://www.etherscan.io/tx/MASKED_TX",
       icon_url:       "https://res.linkcoin.pro/coinicon/ETH.png",
       status:         :success

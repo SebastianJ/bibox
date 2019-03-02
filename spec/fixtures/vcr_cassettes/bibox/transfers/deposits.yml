@@ -57,7 +57,7 @@ http_interactions:
       - 3e57b6aa2ba92f5f-MAD
     body:
       encoding: ASCII-8BIT
-      string: '{"result":[{"result":{"count":2,"page":1,"items":[{"user_id":"MASKED_USER_ID","coin_id":44,"to":"MASKED_ADDRESS","coin_symbol":"ETH","confirmCount":"14+","amount":"1.00000000","updatedAt":"2018-01-29T20:42:28.000Z","createdAt":"2018-01-29T20:39:00.000Z","url":"https://www.etherscan.io/tx/MASKED_TX","icon_url":"https://res.linkcoin.pro/coinicon/ETH.png","status":2},{"user_id":"MASKED_USER_ID","coin_id":44,"to":"MASKED_ADDRESS","coin_symbol":"ETH","confirmCount":"14+","amount":"1.29003722","updatedAt":"2018-01-29T18:32:28.000Z","createdAt":"2018-01-29T18:28:54.000Z","url":"https://www.etherscan.io/tx/0xdbe663d762846314f2f28afa38219f311b4a84987be50dc1fe5e21a1c6d43494","icon_url":"https://res.linkcoin.pro/coinicon/ETH.png","status":2}]},"cmd":"transfer/transferInList"}]}'
+      string: '{"result":[{"result":{"count":2,"page":1,"items":[{"user_id":"MASKED_USER_ID","coin_id":44,"to":"MASKED_ADDRESS","coin_symbol":"ETH","confirmCount":"14+","amount":"1.00000000","updatedAt":"1551517981000","createdAt":"1551517981000","url":"https://www.etherscan.io/tx/MASKED_TX","icon_url":"https://res.linkcoin.pro/coinicon/ETH.png","status":2},{"user_id":"MASKED_USER_ID","coin_id":44,"to":"MASKED_ADDRESS","coin_symbol":"ETH","confirmCount":"14+","amount":"1.29003722","updatedAt":"1551517981000","createdAt":"1551517981000","url":"https://www.etherscan.io/tx/0xdbe663d762846314f2f28afa38219f311b4a84987be50dc1fe5e21a1c6d43494","icon_url":"https://res.linkcoin.pro/coinicon/ETH.png","status":2}]},"cmd":"transfer/transferInList"}]}'
     http_version: 
   recorded_at: Tue, 30 Jan 2018 22:02:07 GMT
 recorded_with: VCR 4.0.0

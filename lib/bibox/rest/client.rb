@@ -18,6 +18,7 @@ module Bibox
       
       include ::Bibox::Rest::Private::Orders
       include ::Bibox::Rest::Private::OrderBook
+      include ::Bibox::Rest::Private::Contracts
       include ::Bibox::Rest::Private::Assets
       include ::Bibox::Rest::Private::Transfers
       include ::Bibox::Rest::Private::Bills
