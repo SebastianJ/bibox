@@ -46,10 +46,13 @@ require "bibox/rest/public/klines"
 
 require "bibox/rest/private/orders"
 require "bibox/rest/private/order_book"
-require "bibox/rest/private/contracts"
 require "bibox/rest/private/assets"
 require "bibox/rest/private/transfers"
 require "bibox/rest/private/bills"
+
+require "bibox/rest/private/contracts/general"
+require "bibox/rest/private/contracts/assets"
+require "bibox/rest/private/contracts/orders"
 
 require "bibox/rest/errors"
 require "bibox/rest/client"

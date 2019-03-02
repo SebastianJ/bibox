@@ -18,10 +18,13 @@ module Bibox
       
       include ::Bibox::Rest::Private::Orders
       include ::Bibox::Rest::Private::OrderBook
-      include ::Bibox::Rest::Private::Contracts
       include ::Bibox::Rest::Private::Assets
       include ::Bibox::Rest::Private::Transfers
       include ::Bibox::Rest::Private::Bills
+      
+      include ::Bibox::Rest::Private::Contracts::General
+      include ::Bibox::Rest::Private::Contracts::Assets
+      include ::Bibox::Rest::Private::Contracts::Orders
             
       def configured?
         !self.configuration.key.to_s.empty? && !self.configuration.secret.to_s.empty?
