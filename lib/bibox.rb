@@ -7,6 +7,11 @@ require "openssl"
 require "faye/websocket"
 require "eventmachine"
 
+# Parsing / Decoding
+require "zlib"
+require "stringio"
+require "base64"
+
 # Shared
 require "json"
 require "date"

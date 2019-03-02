@@ -33,8 +33,8 @@ class WebsocketWrapper
     self.client.callbacks[:klines]        = -> (data) { klines(data) }
   end
   
-  def subscribe!(pairs: ["BIX_ETH", "BIX_BTC"])
-    self.client.subscribe_to_trading_pairs!
+  def subscribe!(pairs: ["4ETH_USDT"])
+    #self.client.subscribe_to_trading_pairs!
     self.client.subscribe_to_order_book!(pairs: pairs)
     self.client.subscribe_to_trades!(pairs: pairs)
     self.client.subscribe_to_ticker!(pairs: pairs)

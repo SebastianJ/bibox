@@ -1,6 +1,6 @@
 module Bibox
   module Websocket
-    # Websocket client for Coinbase Exchange
+    # Websocket client for Bibox
     class Client
       attr_accessor :url, :prefix, :keepalive, :socket, :reactor_owner, :matchers, :callbacks
       
@@ -10,11 +10,11 @@ module Bibox
         self.keepalive    =   options.fetch(:keepalive, false)
         
         self.matchers     =   {
-          trading_pairs:  /[A-Z]{3}_[A-Z]{3}_market/,
-          order_book:     /[A-Z]{3}_[A-Z]{3}_depth$/,
-          trades:         /[A-Z]{3}_[A-Z]{3}_deals$/,
-          ticker:         /[A-Z]{3}_[A-Z]{3}_ticker$/,
-          klines:         /[A-Z]{3}_[A-Z]{3}_kline_(?<period>.*)$/
+          trading_pairs:  /\d?[A-Z]+_[A-Z]+_market/,
+          order_book:     /\d?[A-Z]+_[A-Z]+_depth$/,
+          trades:         /\d?[A-Z]+_[A-Z]+_deals$/,
+          ticker:         /\d?[A-Z]+_[A-Z]+_ticker$/,
+          klines:         /\d?[A-Z]+_[A-Z]+_kline_(?<period>.*)$/
         }
         
         self.callbacks    =   {
@@ -54,14 +54,6 @@ module Bibox
         self.socket.onmessage   =   method(:on_message)
         self.socket.onclose     =   method(:on_close)
         self.socket.onerror     =   method(:on_error)
-      end
-
-      def subscribe!
-        subscribe_to_trading_pairs!
-        subscribe_to_order_book!(pairs: ["BIX_BTC", "BIX_ETH"])
-        subscribe_to_trades!(pair: ["BIX_BTC", "BIX_ETH"])
-        subscribe_to_ticker!(pair: ["BIX_BTC", "BIX_ETH"])
-        subscribe_to_klines!(pair: ["BIX_BTC", "BIX_ETH"], periods: ["5min"])
       end
       
       def subscribe_to_trading_pairs!
@@ -123,13 +115,37 @@ module Bibox
         rescue => err
           return data
         end
+        
+        def decode_and_inflate(data)
+          Zlib::GzipReader.new(StringIO.new(Base64.decode64(data))).read
+        end
+        
+        def send_pong(timestamp)
+          self.socket.send({pong: timestamp}.to_json)
+        end
 
         def on_open(_event)
           self.callbacks[:subscribe].call
         end
 
         def on_message(event)
-          self.callbacks[:message].call(parse(event.data)&.first)
+          parsed                =   parse(event.data)
+
+          if parsed
+            if parsed.is_a?(Hash)
+              send_pong(parsed["ping"]) unless parsed.fetch("ping", nil).to_s.empty?
+            elsif parsed.is_a?(Array)
+              parsed            =   parsed.first
+            end
+            
+            is_binary           =   parsed.fetch("binary", nil)&.eql?("1")
+
+            if is_binary && !parsed.fetch("data", nil).to_s.empty?
+              parsed["data"]    =   parse(decode_and_inflate(parsed["data"]))
+            end
+          
+            self.callbacks[:message].call(parsed)
+          end
         end
 
         def on_close(_event)
